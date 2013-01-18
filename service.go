@@ -129,14 +129,14 @@ func (service *OAuth2Service) RefreshAccessToken(refreshToken string) (
 }
 
 // If you need more custom parameters to get access token or OAuth 2.0
-// Extension Grants <http://tools.ietf.org/html/rfc6749#section-4.5> you can
+// Extension Grants http://tools.ietf.org/html/rfc6749#section-4.5 you can
 // provide custom URL parameters.
 // "client_id", "client_secret", "redirect_uri" (if exists) will be added
 // by default.
 //
 //		service := oauth2.Service(clId, clSecret, authURL, tokenURL)
 //		// get access code
-//      code := "..."
+//		code := "..."
 // 		params := url.Values{}
 // 		params.Set("example_parameter1", "one")
 //		params.Set("example_parameter2", "two")
