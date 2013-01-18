@@ -13,7 +13,8 @@ to make authenticated HTTP requests.
 		YOUR_CLIENT_ID,
 		YOUR_CLIENT_SECRET,
 		"https://github.com/login/oauth/authorize",
-		"https://github.com/login/oauth/access_token")
+		"https://github.com/login/oauth/access_token"
+	)
 
 	// Set custom redirect
 	service.RedirectURL = "http://you.example.org/handler"
@@ -38,7 +39,9 @@ to make authenticated HTTP requests.
 	//github.AccessTokenInURL = true
 
 	// Make the request.
-	githubUserData, err := github.Get("user")
+	// Provide API end point (http://developer.github.com/v3/users/#get-the-authenticated-user)
+	apiEndPoint := "user"
+	githubUserData, err := github.Get(apiEndPoint)
 	if err != nil {
 		log.Fatal("Get:", err)
 	}
