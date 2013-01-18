@@ -15,7 +15,8 @@ import (
 	"time"
 )
 
-type config struct {
+// Config store configuration for OAuth 2.0 client.
+type Config struct {
 	ClientId       string
 	ClientSecret   string
 	Scope          string
@@ -26,12 +27,11 @@ type config struct {
 	AccessType     string
 }
 
-// Token represents a successful response to an OAuth2.0 Access
-// Token Request, including a Refresh Token request.
+// Token represents a successful Access Token Response.
 //
 // 'expires_in' is used to build ExpirationTime
 type Token struct {
-	// http://tools.ietf.org/html/rfc6749#section-5
+	// http://tools.ietf.org/html/rfc6749#section-5.1
 
 	// The access token issued by the authorization server.
 	AccessToken string `json:"access_token"`
@@ -55,8 +55,7 @@ type Token struct {
 	State string `json:"state"`
 }
 
-// Error represents a failed request to the OAuth2.0 Authorization
-// or Resource server.
+// Error represents a failed Access Token Response.
 type Error struct {
 	// http://tools.ietf.org/html/rfc6749#section-5.2
 

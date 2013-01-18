@@ -20,10 +20,13 @@ import (
 )
 
 type oAuth2Service struct {
+	// AuthHeader allows you to add custom headers that'll be added to each
+	// access token request.
 	AuthHeader http.Header
-	*config
+	*Config
 }
 
+// Service initializes basic values that can be used to get access token.
 func Service(clientId, clientSecret string,
 	authorizeURL, accessTokenURL string) *oAuth2Service {
 
@@ -31,112 +34,129 @@ func Service(clientId, clientSecret string,
 	service.AuthHeader = make(http.Header)
 	service.AuthHeader.Set("Accept", "application/json")
 	service.AuthHeader.Set("Content-Type", "application/x-www-form-urlencoded")
-	service.config = new(config)
+	service.Config = new(Config)
 
-	service.config.ClientId = clientId
-
-	service.config.ClientSecret = clientSecret
+	service.ClientId = clientId
+	service.ClientSecret = clientSecret
 
 	authURL, err := url.Parse(authorizeURL)
 	if err != nil {
 		panic("authorizeURL error: " + err.Error())
 	}
-	service.config.AuthorizeURL = *authURL
+	service.AuthorizeURL = *authURL
 
 	tokenURL, err := url.Parse(accessTokenURL)
 	if err != nil {
 		panic("accessTokenURL error: " + err.Error())
 	}
-	service.config.AccessTokenURL = *tokenURL
+	service.AccessTokenURL = *tokenURL
+	service.ResponseType = "code"
 
 	return service
 }
 
-// http://tools.ietf.org/html/rfc6749#section-4.1
-// http://tools.ietf.org/html/rfc6749#section-4.2
-func (service *oAuth2Service) GetAuthorizeURL(
-	responseType, state string) string {
+// GetAuthorizeURL
+func (service *oAuth2Service) GetAuthorizeURL(state string) string {
+	// http://tools.ietf.org/html/rfc6749#section-4.1
+	// http://tools.ietf.org/html/rfc6749#section-4.2
 	params := url.Values{}
 
-	params.Set("response_type", responseType)
-	params.Set("client_id", service.config.ClientId)
-	params.Set("redirect_uri", service.config.RedirectURL)
-	params.Set("scope", service.config.Scope)
-	params.Set("state", state)
-	params.Set("access_type", service.config.AccessType)
+	params.Set("response_type", service.ResponseType)
+	params.Set("client_id", service.ClientId)
+	(*MyUrlValues)(&params).CheckAndSet("redirect_uri", service.RedirectURL)
+	(*MyUrlValues)(&params).CheckAndSet("scope", service.Scope)
+	(*MyUrlValues)(&params).CheckAndSet("state", state)
+	(*MyUrlValues)(&params).CheckAndSet("access_type", service.AccessType)
 
 	query := params.Encode()
-	if service.config.AuthorizeURL.RawQuery == "" {
-		service.config.AuthorizeURL.RawQuery = query
+	if service.AuthorizeURL.RawQuery == "" {
+		service.AuthorizeURL.RawQuery = query
 	} else {
-		service.config.AuthorizeURL.RawQuery += "&" + query
+		service.AuthorizeURL.RawQuery += "&" + query
 	}
-	return service.config.AuthorizeURL.String()
+	return service.AuthorizeURL.String()
 }
 
-// http://tools.ietf.org/html/rfc6749#section-4.1.3
-func (service *oAuth2Service) GetAccessToken(code string) (*Token, error) {
+// GetAccessToken
+func (service *oAuth2Service) GetAccessToken(accessCode string) (
+	*Token, error) {
+	// http://tools.ietf.org/html/rfc6749#section-4.1.3
 	params := url.Values{}
 
 	params.Set("grant_type", "authorization_code")
-	params.Set("code", code)
-	params.Set("scope", service.config.Scope)
+	params.Set("code", accessCode)
+	(*MyUrlValues)(&params).CheckAndSet("scope", service.Scope)
 
-	return service.GetToken(params)
+	return service.getToken(params)
 }
 
-// http://tools.ietf.org/html/rfc6749#section-4.3
+// GetAccessTokenPassword
 func (service *oAuth2Service) GetAccessTokenPassword(
 	username, password string) (*Token, error) {
+	// http://tools.ietf.org/html/rfc6749#section-4.3
 	params := url.Values{}
 
 	params.Set("grant_type", "password")
 	params.Set("username", username)
 	params.Set("password", password)
-	params.Set("scope", service.config.Scope)
+	(*MyUrlValues)(&params).CheckAndSet("scope", service.Scope)
 
-	return service.GetToken(params)
+	return service.getToken(params)
 }
 
-// http://tools.ietf.org/html/rfc6749#section-4.4
+// GetAccessTokenCredentials
 func (service *oAuth2Service) GetAccessTokenCredentials() (*Token, error) {
+	// http://tools.ietf.org/html/rfc6749#section-4.4
 	params := url.Values{}
 
 	params.Set("grant_type", "client_credentials")
-	params.Set("scope", service.config.Scope)
+	(*MyUrlValues)(&params).CheckAndSet("scope", service.Scope)
 
-	return service.GetToken(params)
+	return service.getToken(params)
 }
 
-// http://tools.ietf.org/html/rfc6749#section-6
-func (service *oAuth2Service) RefreshAccessToken(
-	refreshToken string) (*Token, error) {
+// RefreshAccessToken
+func (service *oAuth2Service) RefreshAccessToken(refreshToken string) (
+	*Token, error) {
+	// http://tools.ietf.org/html/rfc6749#section-6
 	params := url.Values{}
 
 	params.Set("grant_type", "refresh_token")
 	params.Set("refresh_token", refreshToken)
-	params.Set("scope", service.config.Scope)
+	(*MyUrlValues)(&params).CheckAndSet("scope", service.Scope)
 
-	return service.GetToken(params)
+	return service.getToken(params)
 }
 
 // If you need more custom parameters to get access token or OAuth 2.0
-// Extension Grants http://tools.ietf.org/html/rfc6749#section-4.5 you can
-// build params yourself.
-// "client_id", "client_secret", "redirect_uri" will be added by default.
+// Extension Grants <http://tools.ietf.org/html/rfc6749#section-4.5> you can
+// provide custom URL parameters.
+// "client_id", "client_secret", "redirect_uri" (if exists) will be added
+// by default.
 //
 //		service := oauth2.Service(clId, clSecret, authURL, tokenURL)
+//		// get access code
+//      code := "..."
 // 		params := url.Values{}
 // 		params.Set("example_parameter1", "one")
 //		params.Set("example_parameter2", "two")
-//		myToken, err := service.GetToken(params)
-func (service *oAuth2Service) GetToken(params url.Values) (*Token, error) {
+//		myToken, err := service.GetToken(code, params)
+func (service *oAuth2Service) GetToken(accessCode string, params url.Values) (
+	*Token, error) {
+	params.Set("code", accessCode)
+	return service.getToken(params)
+}
+
+// getToken makes request for token
+func (service *oAuth2Service) getToken(params url.Values) (
+	*Token, error) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", service.AccessTokenURL.String(), nil)
 
-	params.Set("client_id", service.config.ClientId)
-	params.Set("client_secret", service.config.ClientSecret)
-	params.Set("redirect_uri", service.config.RedirectURL)
+	params.Set("client_id", service.ClientId)
+	params.Set("client_secret", service.ClientSecret)
+	(*MyUrlValues)(&params).CheckAndSet("redirect_uri", service.RedirectURL)
+
 	encParams := params.Encode()
 	reader := strings.NewReader(encParams)
 	req.Body = ioutil.NopCloser(reader)
@@ -226,4 +246,22 @@ func (service *oAuth2Service) GetToken(params url.Values) (*Token, error) {
 	}
 
 	return &token, nil
+}
+
+// MyUrlValues is a wrapper to a url.Values
+type MyUrlValues url.Values
+
+// CheckAndSet sets the key to value if value is not empty. It replaces any
+// existing values.
+//
+//		params := url.Values{}
+//		params.Set("one", "")
+//		params.Set("two", "")
+//		(*MyUrlValues)(&params).CheckAndSet("three", "")
+//		(*MyUrlValues)(&params).CheckAndSet("four", "4")
+//		// params.Encode() => two=&one=&four=4
+func (params *MyUrlValues) CheckAndSet(key, value string) {
+	if len(value) > 0 {
+		(*url.Values)(params).Set(key, value)
+	}
 }
