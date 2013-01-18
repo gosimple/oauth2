@@ -7,6 +7,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -17,11 +18,12 @@ import (
 )
 
 var (
-	// Register new app at https://github.com/settings/applications and update
-	// clientId, clientSecret and redirectURL
-	clientId     = ""
-	clientSecret = ""
-	redirectURL  = "http://httpbin.org/get"
+	// Register new app at https://github.com/settings/applications and provide
+	// clientId (-id), clientSecret (-secret) and redirectURL (-redirect)
+	// as imput arguments.
+	clientId     = flag.String("id", "", "Client ID")
+	clientSecret = flag.String("secret", "", "Client Secret")
+	redirectURL  = flag.String("redirect", "http://httpbin.org/get", "Redirect URL")
 
 	authURL    = "https://github.com/login/oauth/authorize"
 	tokenURL   = "https://github.com/login/oauth/access_token"
@@ -29,20 +31,23 @@ var (
 )
 
 const startInfo = `
-Register new app at https://github.com/settings/applications and update
-clientId, clientSecret and redirectURL in source
+Register new app at https://github.com/settings/applications and provide
+-id, -secret and -redirect as input arguments.
 `
 
 func main() {
-	if clientId == "" || clientSecret == "" {
+	flag.Parse()
+
+	if *clientId == "" || *clientSecret == "" {
 		fmt.Println(startInfo)
+		flag.Usage()
 		os.Exit(2)
 	}
 
 	// Initialize service.
 	service := oauth2.Service(
-		clientId, clientSecret, authURL, tokenURL)
-	service.RedirectURL = redirectURL
+		*clientId, *clientSecret, authURL, tokenURL)
+	service.RedirectURL = *redirectURL
 
 	// Get authorization url.
 	url := service.GetAuthorizeURL("")

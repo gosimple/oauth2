@@ -8,13 +8,15 @@ package oauth2
 
 import (
 	"errors"
-	//_ "fmt"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 )
+
+var _ = fmt.Printf
 
 // ResRequest represents values needed to make authenticated HTTP requests.
 type ResRequest struct {
