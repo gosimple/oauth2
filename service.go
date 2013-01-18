@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-type oAuth2Service struct {
+type OAuth2Service struct {
 	// AuthHeader allows you to add custom headers that'll be added to each
 	// access token request.
 	AuthHeader http.Header
@@ -28,9 +28,9 @@ type oAuth2Service struct {
 
 // Service initializes basic values that can be used to get access token.
 func Service(clientId, clientSecret string,
-	authorizeURL, accessTokenURL string) *oAuth2Service {
+	authorizeURL, accessTokenURL string) *OAuth2Service {
 
-	service := new(oAuth2Service)
+	service := new(OAuth2Service)
 	service.AuthHeader = make(http.Header)
 	service.AuthHeader.Set("Accept", "application/json")
 	service.AuthHeader.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -56,7 +56,7 @@ func Service(clientId, clientSecret string,
 }
 
 // GetAuthorizeURL
-func (service *oAuth2Service) GetAuthorizeURL(state string) string {
+func (service *OAuth2Service) GetAuthorizeURL(state string) string {
 	// http://tools.ietf.org/html/rfc6749#section-4.1
 	// http://tools.ietf.org/html/rfc6749#section-4.2
 	params := url.Values{}
@@ -78,7 +78,7 @@ func (service *oAuth2Service) GetAuthorizeURL(state string) string {
 }
 
 // GetAccessToken
-func (service *oAuth2Service) GetAccessToken(accessCode string) (
+func (service *OAuth2Service) GetAccessToken(accessCode string) (
 	*Token, error) {
 	// http://tools.ietf.org/html/rfc6749#section-4.1.3
 	params := url.Values{}
@@ -91,7 +91,7 @@ func (service *oAuth2Service) GetAccessToken(accessCode string) (
 }
 
 // GetAccessTokenPassword
-func (service *oAuth2Service) GetAccessTokenPassword(
+func (service *OAuth2Service) GetAccessTokenPassword(
 	username, password string) (*Token, error) {
 	// http://tools.ietf.org/html/rfc6749#section-4.3
 	params := url.Values{}
@@ -105,7 +105,7 @@ func (service *oAuth2Service) GetAccessTokenPassword(
 }
 
 // GetAccessTokenCredentials
-func (service *oAuth2Service) GetAccessTokenCredentials() (*Token, error) {
+func (service *OAuth2Service) GetAccessTokenCredentials() (*Token, error) {
 	// http://tools.ietf.org/html/rfc6749#section-4.4
 	params := url.Values{}
 
@@ -116,7 +116,7 @@ func (service *oAuth2Service) GetAccessTokenCredentials() (*Token, error) {
 }
 
 // RefreshAccessToken
-func (service *oAuth2Service) RefreshAccessToken(refreshToken string) (
+func (service *OAuth2Service) RefreshAccessToken(refreshToken string) (
 	*Token, error) {
 	// http://tools.ietf.org/html/rfc6749#section-6
 	params := url.Values{}
@@ -141,14 +141,14 @@ func (service *oAuth2Service) RefreshAccessToken(refreshToken string) (
 // 		params.Set("example_parameter1", "one")
 //		params.Set("example_parameter2", "two")
 //		myToken, err := service.GetToken(code, params)
-func (service *oAuth2Service) GetToken(accessCode string, params url.Values) (
+func (service *OAuth2Service) GetToken(accessCode string, params url.Values) (
 	*Token, error) {
 	params.Set("code", accessCode)
 	return service.getToken(params)
 }
 
 // getToken makes request for token
-func (service *oAuth2Service) getToken(params url.Values) (
+func (service *OAuth2Service) getToken(params url.Values) (
 	*Token, error) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("POST", service.AccessTokenURL.String(), nil)
