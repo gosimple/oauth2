@@ -31,7 +31,6 @@ type ResRequest struct {
 
 	// Set AccessTokenInURL to true if destination service require
 	// authorization in the HTTP request URI
-	//
 	//		GET /resource?access_token=<YOUR_ACCESS_TOKEN> HTTP/1.1
 	//		Host: server.example.com
 	AccessTokenInURL bool
@@ -40,7 +39,6 @@ type ResRequest struct {
 
 	// Set AccessTokenInHeader to true if destination service require
 	// authorization in the "Authorization" request header
-	//
 	//		GET /resource HTTP/1.1
 	//		Host: server.example.com
 	//		Authorization: Bearer <YOUR_ACCESS_TOKEN>
