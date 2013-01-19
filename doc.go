@@ -8,6 +8,8 @@
 Package oauth2 provide support for OAuth 2.0 authentication and ability
 to make authenticated HTTP requests.
 
+Check /examples/ folder for usages.
+
 	// Initialize service.
 	service := oauth2.Service(
 		YOUR_CLIENT_ID,

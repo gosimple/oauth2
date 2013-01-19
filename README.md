@@ -1,10 +1,14 @@
 OAuth2
-==========
+======
 
 Package oauth2 provide support for OAuth 2.0 authentication and ability
 to make authenticated HTTP requests.
 
 [Documentation online](http://godoc.org/bitbucket.org/gosimple/oauth2)
+
+## Example
+
+Check ```examples``` folder for usages.
 
 	// Initialize service.
 	service := oauth2.Service(
@@ -45,7 +49,8 @@ to make authenticated HTTP requests.
 	}
 	defer githubUserData.Body.Close()
 
-### Requests or bugs? 
+### Requests or bugs?
+
 <https://bitbucket.org/gosimple/oauth2/issues>
 
 ## Installation
