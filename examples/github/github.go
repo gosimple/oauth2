@@ -50,11 +50,11 @@ func main() {
 	service.RedirectURL = *redirectURL
 
 	// Get authorization url.
-	url := service.GetAuthorizeURL("")
-	fmt.Println(url)
+	aUrl := service.GetAuthorizeURL("")
+	fmt.Println("\n", aUrl)
 
 	// Open authorization url in default system browser.
-	// webbrowser.Open(url)
+	//webbrowser.Open(url)
 
 	fmt.Printf("\nVisit URL and provide code: ")
 	code := ""
@@ -79,7 +79,7 @@ func main() {
 	}
 	defer githubUserData.Body.Close()
 
-	fmt.Println("User info:")
+	fmt.Println("User info response:")
 	// Write the response to standard output.
 	io.Copy(os.Stdout, githubUserData.Body)
 
