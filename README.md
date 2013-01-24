@@ -6,6 +6,11 @@ to make authenticated HTTP requests.
 
 [Documentation online](http://godoc.org/bitbucket.org/gosimple/oauth2)
 
+## Status
+
+Working for now but can break in future (like moving ```Get```, ```Post```
+methods to ```Service``` to allow auto token refresh etc.).
+
 ## Example
 
 Check ```examples``` folder for usages.
