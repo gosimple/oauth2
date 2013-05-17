@@ -80,6 +80,9 @@ func (service *OAuth2Service) GetAuthorizeURL(state string) string {
 func (service *OAuth2Service) GetAccessToken(accessCode string) (
 	*Token, error) {
 	// http://tools.ietf.org/html/rfc6749#section-4.1.3
+	if len(accessCode) == 0 {
+		return nil, fmt.Errorf("Access code can't be empty")
+	}
 	params := url.Values{}
 
 	params.Set("grant_type", "authorization_code")
@@ -142,6 +145,9 @@ func (service *OAuth2Service) RefreshAccessToken(refreshToken string) (
 //		myToken, err := service.GetToken(code, params)
 func (service *OAuth2Service) GetToken(accessCode string, params url.Values) (
 	*Token, error) {
+	if len(accessCode) == 0 {
+		return nil, fmt.Errorf("Access code can't be empty")
+	}
 	params.Set("code", accessCode)
 	return service.getToken(params)
 }
@@ -200,12 +206,12 @@ func (service *OAuth2Service) getToken(params url.Values) (
 		State        string `json:"state"`
 	}
 
-	content, _, _ := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	content, _, err := mime.ParseMediaType(resp.Header.Get("Content-Type"))
+	if err != nil {
+		return nil, err
+	}
 	switch content {
 	case "application/x-www-form-urlencoded", "text/plain", "text/html":
-		if err != nil {
-			return nil, err
-		}
 		vals, err := url.ParseQuery(string(raw))
 		if err != nil {
 			return nil, err
