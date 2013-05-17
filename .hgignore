@@ -1,7 +1,7 @@
 syntax: glob
 ## Special files
 *~
-## [._]*
+[_]*
 
 ## Compiled Go source
 [568vq].out
