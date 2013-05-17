@@ -7,13 +7,14 @@
 package main
 
 import (
+	"bitbucket.org/gosimple/oauth2"
+
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
 
-	"bitbucket.org/gosimple/oauth2"
 	//"github.com/toqueteos/webbrowser"
 )
 
@@ -51,7 +52,9 @@ func main() {
 
 	// Get authorization url.
 	aUrl := service.GetAuthorizeURL("")
-	fmt.Println("\n", aUrl)
+	fmt.Println()
+	fmt.Printf("%v", aUrl)
+	fmt.Println()
 
 	// Open authorization url in default system browser.
 	//webbrowser.Open(url)
