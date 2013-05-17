@@ -151,7 +151,10 @@ func (service *OAuth2Service) GetToken(accessCode string, params url.Values) (
 func (service *OAuth2Service) getToken(params url.Values) (
 	*Token, error) {
 	client := &http.Client{}
-	req, _ := http.NewRequest("POST", service.AccessTokenURL.String(), nil)
+	req, err := http.NewRequest("POST", service.AccessTokenURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	params.Set("client_id", service.ClientId)
 	params.Set("client_secret", service.ClientSecret)
