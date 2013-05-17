@@ -277,6 +277,14 @@ func (service *OAuth2Service) getToken(params url.Values) (
 	return &token, nil
 }
 
+// Expired returns true if access token must be refreshed.
+func (token *Token) Expired() bool {
+	if token.ExpirationTime.IsZero() {
+		return false
+	}
+	return token.ExpirationTime.Before(time.Now())
+}
+
 // MyUrlValues is a wrapper to a url.Values
 type MyUrlValues url.Values
 
