@@ -243,14 +243,14 @@ func (service *OAuth2Service) getToken(params url.Values) (
 	token.State = localToken.State
 
 	if len(token.AccessToken) == 0 {
-		tokenError := Error{}
+		tokenError := TokenError{}
 		switch content {
 		case "application/x-www-form-urlencoded", "text/plain", "text/html":
 			vals, err := url.ParseQuery(string(raw))
 			if err != nil {
 				return nil, err
 			}
-			tokenError.Type = vals.Get("error")
+			tokenError.Error = vals.Get("error")
 			tokenError.Description = vals.Get("error_description")
 			tokenError.URI = vals.Get("error_uri")
 			tokenError.State = vals.Get("state")
@@ -259,7 +259,13 @@ func (service *OAuth2Service) getToken(params url.Values) (
 				return nil, err
 			}
 		}
-		return nil, fmt.Errorf("No access token found, response: %v", tokenError)
+		return nil, fmt.Errorf("No access token found, "+
+			"error: %v, description: %v, URI: %v, state: %v",
+			tokenError.Error,
+			tokenError.Description,
+			tokenError.URI,
+			tokenError.State,
+		)
 	}
 
 	return &token, nil

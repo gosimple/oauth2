@@ -56,11 +56,11 @@ type Token struct {
 }
 
 // Error represents a failed Access Token Response.
-type Error struct {
+type TokenError struct {
 	// http://tools.ietf.org/html/rfc6749#section-5.2
 
 	// A single ASCII [USASCII] error code
-	Type string `json:"error"`
+	Error string `json:"error"`
 
 	// A human-readable ASCII [USASCII] text providing
 	// additional information, used to assist the client developer in
