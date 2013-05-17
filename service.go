@@ -8,7 +8,6 @@ package oauth2
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"mime"
@@ -244,8 +243,23 @@ func (service *OAuth2Service) getToken(params url.Values) (
 	token.State = localToken.State
 
 	if len(token.AccessToken) == 0 {
-		errorString := fmt.Sprintf("No access token found, response: %v", raw)
-		return nil, errors.New(errorString)
+		tokenError := Error{}
+		switch content {
+		case "application/x-www-form-urlencoded", "text/plain", "text/html":
+			vals, err := url.ParseQuery(string(raw))
+			if err != nil {
+				return nil, err
+			}
+			tokenError.Type = vals.Get("error")
+			tokenError.Description = vals.Get("error_description")
+			tokenError.URI = vals.Get("error_uri")
+			tokenError.State = vals.Get("state")
+		default:
+			if err := json.Unmarshal(raw, &tokenError); err != nil {
+				return nil, err
+			}
+		}
+		return nil, fmt.Errorf("No access token found, response: %v", tokenError)
 	}
 
 	return &token, nil
