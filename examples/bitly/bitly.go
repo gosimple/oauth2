@@ -3,6 +3,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 package main
 
 import (
@@ -18,7 +19,7 @@ import (
 )
 
 var (
-	// Register new app at https://github.com/settings/applications and provide
+	// Register new app at https://bitly.com/a/oauth_apps and provide
 	// clientId (-id), clientSecret (-secret) and redirectURL (-redirect)
 	// as imput arguments.
 	clientId     = flag.String("id", "", "Client ID")
@@ -31,7 +32,7 @@ var (
 )
 
 const startInfo = `
-Register new app at https://github.com/settings/applications and provide
+Register new app at https://bitly.com/a/oauth_apps and provide
 -id, -secret and -redirect as input arguments.
 `
 
@@ -56,7 +57,7 @@ func main() {
 	fmt.Println()
 
 	// Open authorization url in default system browser.
-	//webbrowser.Open(url)
+	//webbrowser.Open(aUrl)
 
 	fmt.Printf("\nVisit URL and provide code: ")
 	code := ""
@@ -65,9 +66,11 @@ func main() {
 	// Get access token.
 	token, err := service.GetAccessToken(code)
 	if err != nil {
-		log.Fatal("Get access token error: ", err)
+		log.Fatalf("Get access token error: %v", err)
 	}
 	fmt.Println()
+	fmt.Println("Token expiration time:", token.ExpirationTime)
+	fmt.Println("Is token expired?:", token.Expired())
 
 	// Prepare resource request.
 	bitly := oauth2.Request(apiBaseURL, token.AccessToken)
@@ -78,7 +81,7 @@ func main() {
 	apiEndPoint := "user/info"
 	bitlyUserInfo, err := bitly.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get: ", err)
+		log.Fatalf("Get: %v", err)
 	}
 	defer bitlyUserInfo.Body.Close()
 

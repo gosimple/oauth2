@@ -69,9 +69,11 @@ func main() {
 	// Get access token.
 	token, err := service.GetAccessToken(code)
 	if err != nil {
-		log.Fatal("Get access token error: ", err)
+		log.Fatalf("Get access token error: %v", err)
 	}
 	fmt.Println()
+	fmt.Println("Token expiration time:", token.ExpirationTime)
+	fmt.Println("Is token expired?:", token.Expired())
 
 	// Prepare resource request.
 	google := oauth2.Request(apiBaseURL, token.AccessToken)
@@ -82,7 +84,7 @@ func main() {
 	apiEndPoint := "userinfo"
 	googleUserData, err := google.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get: ", err)
+		log.Fatalf("Get: %v", err)
 	}
 	defer googleUserData.Body.Close()
 

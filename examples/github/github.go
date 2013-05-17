@@ -57,7 +57,7 @@ func main() {
 	fmt.Println()
 
 	// Open authorization url in default system browser.
-	//webbrowser.Open(url)
+	//webbrowser.Open(aUrl)
 
 	fmt.Printf("\nVisit URL and provide code: ")
 	code := ""
@@ -66,9 +66,11 @@ func main() {
 	// Get access token.
 	token, err := service.GetAccessToken(code)
 	if err != nil {
-		log.Fatal("Get access token error: ", err)
+		log.Fatalf("Get access token error: %v", err)
 	}
 	fmt.Println()
+	fmt.Println("Token expiration time:", token.ExpirationTime)
+	fmt.Println("Is token expired?:", token.Expired())
 
 	// Prepare resource request.
 	github := oauth2.Request(apiBaseURL, token.AccessToken)
@@ -81,7 +83,7 @@ func main() {
 	apiEndPoint := "user"
 	githubUserData, err := github.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get: ", err)
+		log.Fatalf("Get: %v", err)
 	}
 	defer githubUserData.Body.Close()
 
