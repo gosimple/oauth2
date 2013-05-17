@@ -61,7 +61,10 @@ func main() {
 	// Read access code from cmd.
 	fmt.Scanf("%s", &code)
 	// Get access token.
-	token, _ := service.GetAccessToken(code)
+	token, err := service.GetAccessToken(code)
+	if err != nil {
+		log.Fatal("Get access token error: ", err)
+	}
 	fmt.Println()
 
 	// Prepare resource request.
@@ -75,7 +78,7 @@ func main() {
 	apiEndPoint := "user"
 	githubUserData, err := github.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get:", err)
+		log.Fatal("Get: ", err)
 	}
 	defer githubUserData.Body.Close()
 

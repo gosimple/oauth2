@@ -60,7 +60,10 @@ func main() {
 	// Read access code from cmd.
 	fmt.Scanf("%s", &code)
 	// Get access token.
-	token, _ := service.GetAccessToken(code)
+	token, err := service.GetAccessToken(code)
+	if err != nil {
+		log.Fatal("Get access token error: ", err)
+	}
 	fmt.Println()
 
 	// Prepare resource request.
@@ -72,7 +75,7 @@ func main() {
 	apiEndPoint := "user/info"
 	bitlyUserInfo, err := bitly.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get:", err)
+		log.Fatal("Get: ", err)
 	}
 	defer bitlyUserInfo.Body.Close()
 
