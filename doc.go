@@ -30,7 +30,7 @@ Check /examples/ folder for usages.
 	// Get access token.
 	token, err := service.GetAccessToken(code)
 	if err != nil {
-		boo
+		log.Fatal("Get access token error: ", err)
 	}
 
 	// Prepare resource request.
@@ -45,7 +45,7 @@ Check /examples/ folder for usages.
 	apiEndPoint := "user"
 	githubUserData, err := github.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get:", err)
+		log.Fatal("Get: ", err)
 	}
 	defer githubUserData.Body.Close()
 

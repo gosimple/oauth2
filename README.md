@@ -35,7 +35,7 @@ Check ```examples``` folder for usages.
 	// Get access token.
 	token, err := service.GetAccessToken(code)
 	if err != nil {
-		boo
+		log.Fatal("Get access token error: ", err)
 	}
 
 	// Prepare resource request.
@@ -50,7 +50,7 @@ Check ```examples``` folder for usages.
 	apiEndPoint := "user"
 	githubUserData, err := github.Get(apiEndPoint)
 	if err != nil {
-		log.Fatal("Get:", err)
+		log.Fatal("Get: ", err)
 	}
 	defer githubUserData.Body.Close()
 
@@ -64,8 +64,8 @@ Check ```examples``` folder for usages.
 
 ## License
 
-The source files are distributed under the 
+The source files are distributed under the
 [Mozilla Public License, version 2.0](http://mozilla.org/MPL/2.0/),
-unless otherwise noted.  
+unless otherwise noted.
 Please read the [FAQ](http://www.mozilla.org/MPL/2.0/FAQ.html)
 if you have further questions regarding the license.
