@@ -50,6 +50,6 @@ Check /examples/ folder for usages.
 	defer githubUserData.Body.Close()
 
 Requests or bugs?
-https://bitbucket.org/matrixik/go-oauth2/issues
+https://bitbucket.org/gosimple/oauth2/issues
 */
 package oauth2
