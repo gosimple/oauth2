@@ -4,7 +4,7 @@ OAuth2
 Package oauth2 provide support for OAuth 2.0 authentication and ability
 to make authenticated HTTP requests.
 
-[Documentation online](http://godoc.org/bitbucket.org/gosimple/oauth2)
+[Documentation online](http://godoc.org/github.com/gosimple/oauth2)
 
 ## Status
 
@@ -56,11 +56,11 @@ Check ```examples``` folder for usages.
 
 ### Requests or bugs?
 
-<https://bitbucket.org/gosimple/oauth2/issues>
+<https://github.com/gosimple/oauth2/issues>
 
 ## Installation
 
-	go get bitbucket.org/gosimple/oauth2
+	go get github.com/gosimple/oauth2
 
 ## License
 
