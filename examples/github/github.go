@@ -7,7 +7,7 @@
 package main
 
 import (
-	"bitbucket.org/gosimple/oauth2"
+	"github.com/gosimple/oauth2"
 
 	"flag"
 	"fmt"
