@@ -1,3 +1,6 @@
+Unmaintained, use https://github.com/golang/oauth2 instead.
+
+
 OAuth2
 ======
 
